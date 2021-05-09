@@ -1,35 +1,28 @@
-/*
- *
- * Copyright 2015 gRPC authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-// Package main implements a server for Greeter service.
 package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net"
+	"strconv"
+	"database/sql"
 
 	"google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+    	_ "github.com/go-sql-driver/mysql"
 )
 
+type reporteJSON struct {
+	Carnet          int `json: "carnet"`
+	Nombre      string `json: "nombre"`
+	Curso           string    `json: "curso"`
+	Cuerpo_reporte string `json: "cuerpo_reporte"`
+	Servidor_procesado string `json: "servidor_procesado"`
+}
+
 const (
-	port = ":50051"
+	port = ":5002"
 )
 
 // server is used to implement helloworld.GreeterServer.
@@ -39,18 +32,47 @@ type server struct {
 
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Printf("Received: %v", in.GetName())
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
+	//log.Printf("Received1: %v", in.GetName())
+
+	// Conexion a mongodb
+	data := in.GetName()
+	info := reporteJSON{}
+	json.Unmarshal([]byte(data), &info)
+
+	db, err := sql.Open("mysql", "admin:administrador@tcp(database-redes2-g14.cqzrquobie6y.us-east-2.rds.amazonaws.com:3306)/redes")
+
+	if err != nil {
+        panic(err.Error())
+    }
+    
+    	defer db.Close()
+
+	sentenciaPreparada, err := db.Prepare("INSERT INTO REPORTE (Carnet, Nombre, Curso_proyeto, Cuerpo, Servidor_procesado) VALUES(?, ?, ?, ?, ?)")
+	if err != nil {
+		//return err
+	}
+	defer sentenciaPreparada.Close()
+	
+	_, err = sentenciaPreparada.Exec(strconv.FormatInt(int64(info.Carnet), 10), info.Nombre, info.Curso, info.Cuerpo_reporte, info.Servidor_procesado)
+	if err != nil {
+		//return err
+	}
+	//return nil
+	
+	log.Printf("Carnet: %v, Nombre: %v, Curso: %v, Cuerpo de reporte: %v, Servidor procesado: %v", strconv.FormatInt(int64(info.Carnet), 10),info.Nombre,info.Curso,info.Cuerpo_reporte,info.Servidor_procesado)
+
+	// Respuesta al cliente grpc
+	return &pb.HelloReply{Message: "Servidor recibio la informacion correctamente."}, nil
 }
 
 func main() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		//log.Printf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterGreeterServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		//log.Printf("failed to serve: %v", err)
 	}
 }

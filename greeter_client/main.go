@@ -21,38 +21,54 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"io/ioutil"
 	"log"
-	"os"
+	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
 const (
-	address     = "localhost:50051"
-	defaultName = "world"
+	address     = "localhost:5002"
 )
 
-func main() {
-	// Set up a connection to the server.
+func Inicio(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hola GRPC")
+}
+
+func createNewArticle(w http.ResponseWriter, r *http.Request) {
+	// get the body of our POST request
+	// return the string response containing the request body
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	//fmt.Fprintf(w, "%+v...Holis :)", string(reqBody))
+
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Printf("did not connect: %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGreeterClient(conn)
 
 	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting: %s", r.GetMessage())
+	res, err := c.SayHello(ctx, &pb.HelloRequest{Name: string(reqBody)})
+
+	log.Printf("Greeting: %s", res.GetMessage())
+}
+
+func handleRequests() {
+	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter.HandleFunc("/", Inicio).Methods("GET")
+	myRouter.HandleFunc("/", createNewArticle).Methods("POST")
+	http.ListenAndServe(":5001", myRouter)
+}
+
+func main() {
+	handleRequests()
+	// Set up a connection to the server.
 }
