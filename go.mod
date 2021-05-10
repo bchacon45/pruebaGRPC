@@ -1,4 +1,4 @@
-module helloworld
+module github.com/bchacon45/pruebaGRPC
 
 go 1.16
 
