@@ -246,7 +246,7 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 		if(asistencias == ""){
 			asistencias = "{ \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
 		}else{
-			asistencias += ",\n \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+			asistencias += ",\n {\"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
 		}
 		
 	}
@@ -290,7 +290,7 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 		if(asistencias == ""){
 			asistencias = "{ \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
 		}else{
-			asistencias += ",\n \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+			asistencias += ",\n {\"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
 		}
 		
 	}
@@ -334,7 +334,7 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 		if(asistencias == ""){
 			asistencias = "{ \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
 		}else{
-			asistencias += ",\n \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+			asistencias += ",\n {\"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
 		}
 		
 	}
