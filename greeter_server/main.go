@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net"
+	"fmt"
 	"strconv"
 	"database/sql"
 
@@ -26,6 +27,15 @@ type reporteJSON struct {
 	Captura 	 string `json: "Captura" ?`
 }
 
+type reporte struct {
+	ReporteId	int
+	Carnet          string
+	Nombre      string
+	Curso           string
+	Cuerpo_reporte string
+	Servidor_procesado string
+	Fecha	string
+} 
 
 
 const (
@@ -101,6 +111,51 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 		// Respuesta al cliente grpc
 		return &pb.HelloReply{Message: "Servidor recibio la informacion correctamente."}, nil
 	
+	case 3:
+
+	db, err := sql.Open("mysql", "admin:administrador@tcp(database-redes2-g14.cqzrquobie6y.us-east-2.rds.amazonaws.com:3306)/redes")
+
+		if err != nil {
+       		 panic(err.Error())
+    	}
+    
+    	defer db.Close()
+	
+	reportes := ""
+	
+	filas, err := db.Query("SELECT ReporteId, Carnet,    Nombre, Curso_proyeto,     Cuerpo,   Servidor_procesado, Fecha FROM REPORTE")
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Si llegamos aquí, significa que no ocurrió ningún error
+	defer filas.Close()
+
+	// Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
+	var c reporte
+
+	// Recorrer todas las filas, en un "while"
+	for filas.Next() {
+		err = filas.Scan(&c.ReporteId, &c.Carnet, &c.Nombre, &c.Curso, &c.Cuerpo_reporte, &c.Servidor_procesado, &c.Fecha)
+		// Al escanear puede haber un error
+		if err != nil {
+			return nil, err
+		}
+		// Y si no, entonces agregamos lo leído al arreglo
+		if(reportes == ""){
+			reportes = "{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"valor\": 3 }"
+		}else{
+			reportes += ",\n{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"valor\": 3 }"
+		}
+		
+	}
+	reportes = "[\n" + reportes + "\n]"
+
+	// Vacío o no, regresamos el arreglo de contactos
+	return &pb.HelloReply{Message: reportes}, nil
+	
+	
 	default:
 		log.Printf("no se ingreso ninguno de los casos")
 
@@ -108,6 +163,7 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 	}
 
 	return &pb.HelloReply{Message: "Servidor NO  recibio la informacion correctamente."}, nil
+	
 	
 }
 
