@@ -59,34 +59,17 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	res, err := c.SayHello(ctx, &pb.HelloRequest{Name: string(reqBody)})
 
 	log.Printf("Greeting: %s", res.GetMessage())
+	fmt.Fprintf(w, res.GetMessage())
+	
 }
 
-func createNewAssistance(w http.ResponseWriter, r *http.Request) {
-	// get the body of our POST request
-	// return the string response containing the request body
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	//fmt.Fprintf(w, "%+v...Holis :)", string(reqBody))
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Printf("did not connect: %v", err)
-	}
-	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
-
-	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	res, err := c.RegistrarAsistencia(ctx, &pb.HelloRequest{Name: string(reqBody)})
-
-	log.Printf("Greeting: %s", res.GetMessage())
-}
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", Inicio).Methods("GET")
 	myRouter.HandleFunc("/", createNewArticle).Methods("POST")
-	myRouter.HandleFunc("/createAsistencia",createNewAssistance).Methods("POST")
+	
 	http.ListenAndServe(":5001", myRouter)
 }
 
