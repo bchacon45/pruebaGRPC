@@ -14,16 +14,16 @@ import (
 )
 
 type reporteJSON struct {
-	Valor          int `json: "valor"`
-	Carnet          int `json: "carnet"`
-	Nombre      string `json: "nombre"`
-	Curso           string    `json: "curso"`
-	Cuerpo_reporte string `json: "cuerpo_reporte"`
-	Servidor_procesado string `json: "servidor_procesado"`
-	IdEvento           int    `json: "IdEvento"`
-	NombreEvento string `json: "NombreEvento"`
-	UrlCaptura   string `json: "UrlCaptura"`
-	Captura 	 string `json: "Captura"`
+	Valor          int `json: "valor" ?`
+	Carnet          int `json: "carnet" ?`
+	Nombre      string `json: "nombre" ?`
+	Curso           string    `json: "curso" ?`
+	Cuerpo_reporte string `json: "cuerpo_reporte" ?`
+	Servidor_procesado string `json: "servidor_procesado" ? `
+	IdEvento           int    `json: "IdEvento" ?`
+	NombreEvento string `json: "NombreEvento" ?`
+	UrlCaptura   string `json: "UrlCaptura" ?`
+	Captura 	 string `json: "Captura" ?`
 }
 
 
