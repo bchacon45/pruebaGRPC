@@ -37,6 +37,17 @@ type reporte struct {
 	Fecha	string
 } 
 
+type asistencia struct {
+	AsistenciaId	int
+	Carnet          string
+	NombreEstudiante      string
+	IdEvento           string
+	NombreEvento string
+	UrlCaptura string
+	Captura	string
+	Servidor_procesado	string
+	FechaHora	string
+} 
 
 const (
 	port = ":5002"
@@ -144,9 +155,9 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 		}
 		// Y si no, entonces agregamos lo leído al arreglo
 		if(reportes == ""){
-			reportes = "{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"valor\": 3 }"
+			reportes = "{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\"}"
 		}else{
-			reportes += ",\n{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"valor\": 3 }"
+			reportes += ",\n{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\" }"
 		}
 		
 	}
@@ -155,6 +166,222 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 	// Vacío o no, regresamos el arreglo de contactos
 	return &pb.HelloReply{Message: reportes}, nil
 	
+	
+	case 4:
+
+	db, err := sql.Open("mysql", "admin:administrador@tcp(database-redes2-g14.cqzrquobie6y.us-east-2.rds.amazonaws.com:3306)/redes")
+
+		if err != nil {
+       		 panic(err.Error())
+    	}
+    
+    	defer db.Close()
+	
+	reportes := ""
+	
+	filas, err := db.Query("SELECT ReporteId, Carnet,    Nombre, Curso_proyeto,     Cuerpo,   Servidor_procesado, Fecha FROM REPORTE WHERE Carnet = ?", info.Carnet)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Si llegamos aquí, significa que no ocurrió ningún error
+	defer filas.Close()
+
+	// Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
+	var c reporte
+
+	// Recorrer todas las filas, en un "while"
+	for filas.Next() {
+		err = filas.Scan(&c.ReporteId, &c.Carnet, &c.Nombre, &c.Curso, &c.Cuerpo_reporte, &c.Servidor_procesado, &c.Fecha)
+		// Al escanear puede haber un error
+		if err != nil {
+			return nil, err
+		}
+		// Y si no, entonces agregamos lo leído al arreglo
+		if(reportes == ""){
+			reportes = "{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\" }"
+		}else{
+			reportes += ",\n{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\"}"
+		}
+		
+	}
+	reportes = "[\n" + reportes + "\n]"
+
+	// Vacío o no, regresamos el arreglo de contactos
+	return &pb.HelloReply{Message: reportes}, nil
+	
+	case 5:
+
+	db, err := sql.Open("mysql", "admin:administrador@tcp(database-redes2-g14.cqzrquobie6y.us-east-2.rds.amazonaws.com:3306)/redes")
+
+		if err != nil {
+       		 panic(err.Error())
+    	}
+    
+    	defer db.Close()
+	
+	asistencias := ""
+	
+	filas, err := db.Query("SELECT AsistenciaId, Carnet,    NombreEstudiante, IdEvento,     NombreEvento,   UrlCaptura, Captura, Servidor_procesado, FechaHora FROM datos")
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Si llegamos aquí, significa que no ocurrió ningún error
+	defer filas.Close()
+
+	// Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
+	var c asistencia
+
+	// Recorrer todas las filas, en un "while"
+	for filas.Next() {
+		err = filas.Scan(&c.AsistenciaId, &c.Carnet, &c.NombreEstudiante, &c.IdEvento, &c.NombreEvento, &c.UrlCaptura, &c.Captura, &c.Servidor_procesado , &c.FechaHora)
+		// Al escanear puede haber un error
+		if err != nil {
+			return nil, err
+		}
+		// Y si no, entonces agregamos lo leído al arreglo
+		if(asistencias == ""){
+			asistencias = "{ \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+		}else{
+			asistencias += ",\n \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+		}
+		
+	}
+	asistencias = "[\n" + asistencias + "\n]"
+
+	// Vacío o no, regresamos el arreglo de contactos
+	return &pb.HelloReply{Message: asistencias}, nil
+	
+	case 6:
+
+	db, err := sql.Open("mysql", "admin:administrador@tcp(database-redes2-g14.cqzrquobie6y.us-east-2.rds.amazonaws.com:3306)/redes")
+
+		if err != nil {
+       		 panic(err.Error())
+    	}
+    
+    	defer db.Close()
+	
+	asistencias := ""
+	
+	filas, err := db.Query("SELECT AsistenciaId, Carnet,    NombreEstudiante, IdEvento,     NombreEvento,   UrlCaptura, Captura, Servidor_procesado, FechaHora FROM datos WHERE Carnet = ?", info.Carnet)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Si llegamos aquí, significa que no ocurrió ningún error
+	defer filas.Close()
+
+	// Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
+	var c asistencia
+
+	// Recorrer todas las filas, en un "while"
+	for filas.Next() {
+		err = filas.Scan(&c.AsistenciaId, &c.Carnet, &c.NombreEstudiante, &c.IdEvento, &c.NombreEvento, &c.UrlCaptura, &c.Captura, &c.Servidor_procesado , &c.FechaHora)
+		// Al escanear puede haber un error
+		if err != nil {
+			return nil, err
+		}
+		// Y si no, entonces agregamos lo leído al arreglo
+		if(asistencias == ""){
+			asistencias = "{ \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+		}else{
+			asistencias += ",\n \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+		}
+		
+	}
+	asistencias = "[\n" + asistencias + "\n]"
+
+	// Vacío o no, regresamos el arreglo de contactos
+	return &pb.HelloReply{Message: asistencias}, nil
+	
+	case 7:
+
+	db, err := sql.Open("mysql", "admin:administrador@tcp(database-redes2-g14.cqzrquobie6y.us-east-2.rds.amazonaws.com:3306)/redes")
+
+		if err != nil {
+       		 panic(err.Error())
+    	}
+    
+    	defer db.Close()
+	
+	asistencias := ""
+	
+	filas, err := db.Query("SELECT AsistenciaId, Carnet,    NombreEstudiante, IdEvento,     NombreEvento,   UrlCaptura, Captura, Servidor_procesado, FechaHora FROM datos WHERE IdEvento = ?", info.IdEvento)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Si llegamos aquí, significa que no ocurrió ningún error
+	defer filas.Close()
+
+	// Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
+	var c asistencia
+
+	// Recorrer todas las filas, en un "while"
+	for filas.Next() {
+		err = filas.Scan(&c.AsistenciaId, &c.Carnet, &c.NombreEstudiante, &c.IdEvento, &c.NombreEvento, &c.UrlCaptura, &c.Captura, &c.Servidor_procesado , &c.FechaHora)
+		// Al escanear puede haber un error
+		if err != nil {
+			return nil, err
+		}
+		// Y si no, entonces agregamos lo leído al arreglo
+		if(asistencias == ""){
+			asistencias = "{ \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+		}else{
+			asistencias += ",\n \"AsistenciaId\": " + fmt.Sprint(c.AsistenciaId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.NombreEstudiante + "\", \"IdEvento\": \"" + c.IdEvento + "\", \"NombreEvento\": \"" + c.NombreEvento + "\", \"UrlCaptura\": \"" + c.UrlCaptura + "\", \"Captura\": \"" + c.Captura + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\", \"FechaHora\": \"" + c.FechaHora + "\"}"
+		}
+		
+	}
+	asistencias = "[\n" + asistencias + "\n]"
+
+	// Vacío o no, regresamos el arreglo de contactos
+	return &pb.HelloReply{Message: asistencias}, nil
+	
+	case 8:
+
+	db, err := sql.Open("mysql", "admin:administrador@tcp(database-redes2-g14.cqzrquobie6y.us-east-2.rds.amazonaws.com:3306)/redes")
+
+		if err != nil {
+       		 panic(err.Error())
+    	}
+    
+    	defer db.Close()
+	
+	reportes := ""
+	
+	filas, err := db.Query("SELECT ReporteId, Carnet,    Nombre, Curso_proyeto,     Cuerpo,   Servidor_procesado, Fecha FROM REPORTE where Carnet = ? order by Fecha desc limit 1", info.Carnet)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Si llegamos aquí, significa que no ocurrió ningún error
+	defer filas.Close()
+
+	// Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
+	var c reporte
+
+	// Recorrer todas las filas, en un "while"
+	for filas.Next() {
+		err = filas.Scan(&c.ReporteId, &c.Carnet, &c.Nombre, &c.Curso, &c.Cuerpo_reporte, &c.Servidor_procesado, &c.Fecha)
+		// Al escanear puede haber un error
+		if err != nil {
+			return nil, err
+		}
+		// Y si no, entonces agregamos lo leído al arreglo
+			reportes = "{ \"ReporteId\": " + fmt.Sprint(c.ReporteId) +", \"carnet\": \"" + c.Carnet + "\", \"nombre\": \"" + c.Nombre + "\", \"cuerpo_reporte\": \"" + c.Cuerpo_reporte + "\", \"curso\": \"" + c.Curso + "\", \"Fecha\": \"" + c.Fecha + "\", \"servidor_procesado\": \"" + c.Servidor_procesado + "\"}"
+		
+	}
+	reportes = "[\n" + reportes + "\n]"
+
+	// Vacío o no, regresamos el arreglo de contactos
+	return &pb.HelloReply{Message: reportes}, nil
 	
 	default:
 		log.Printf("no se ingreso ninguno de los casos")

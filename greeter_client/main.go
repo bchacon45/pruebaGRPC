@@ -58,7 +58,7 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	res, err := c.SayHello(ctx, &pb.HelloRequest{Name: string(reqBody)})
 
-	log.Printf("Greeting: %s", res.GetMessage())
+	//log.Printf("Greeting: %s", res.GetMessage())
 	fmt.Fprintf(w, res.GetMessage())
 	
 }
