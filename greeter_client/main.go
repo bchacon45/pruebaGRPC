@@ -28,7 +28,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	pb "google.golang.org/grpc"
+	"google.golang.org/grpc"
+	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
 const (
