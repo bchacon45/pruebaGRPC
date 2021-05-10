@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	address     = "172.31.4.166:5002"
+	address     = "172.31.8.182:5002"
 )
 
 func Inicio(w http.ResponseWriter, r *http.Request) {
@@ -88,9 +88,9 @@ func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.Use(CORS)
 	myRouter.HandleFunc("/", Inicio).Methods("GET")
-	myRouter.HandleFunc("/", createNewArticle).Methods("POST")
+	myRouter.HandleFunc("/api", createNewArticle).Methods("POST")
 	
-	http.ListenAndServe(":5001", myRouter)
+	http.ListenAndServe(":80", myRouter)
 }
 
 func main() {
