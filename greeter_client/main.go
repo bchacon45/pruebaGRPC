@@ -63,10 +63,30 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	
 }
 
+func CORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
+		// Set headers
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		fmt.Println("ok")
+
+		// Next
+		next.ServeHTTP(w, r)
+		return
+	})
+}
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter.use(CORS)
 	myRouter.HandleFunc("/", Inicio).Methods("GET")
 	myRouter.HandleFunc("/", createNewArticle).Methods("POST")
 	
