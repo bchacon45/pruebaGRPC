@@ -9,7 +9,7 @@ import (
 	"database/sql"
 
 	"google.golang.org/grpc"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	pb "https://github.com/bchacon45/pruebaGRPC/tree/main/helloworld"
     	_ "github.com/go-sql-driver/mysql"
 )
 
