@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	address     = "localhost:5002"
+	address     = "18.191.181.209:5002"
 )
 
 func Inicio(w http.ResponseWriter, r *http.Request) {
